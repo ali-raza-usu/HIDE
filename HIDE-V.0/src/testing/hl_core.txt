@@ -1,0 +1,559 @@
+DROP DATABASE HL_CORE_V2_TEST; 
+
+CREATE DATABASE HL_CORE_V2_TEST WITH ENCODING='UTF8' OWNER="PP_TEST" CONNECTION LIMIT=-1;
+
+GRANT ALL ON DATABASE HL_CORE_V2_TEST TO public;
+
+
+DROP TABLE utah_health_district cascade;
+
+CREATE TABLE utah_health_district
+(
+  utah_health_district_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  code character(2) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk23 PRIMARY KEY (utah_health_district_id)
+); 
+ 
+
+DROP TABLE opt cascade;
+
+CREATE TABLE opt
+(
+  charm_id bigint NOT NULL,
+  opt_type character(1) NOT NULL,
+  opt_id bigint NOT NULL,
+  service character varying(100),
+  requesting_program character varying(100),
+  service_group character varying(100),
+  requesting_program_group character varying(100),
+  CONSTRAINT optPrimKey PRIMARY KEY (opt_id)
+); 
+
+DROP TABLE phone_format cascade;
+
+CREATE TABLE phone_format
+(
+  phone_format_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  mask character varying(20) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk15 PRIMARY KEY (phone_format_id)
+); 
+
+DROP TABLE country cascade;
+
+CREATE TABLE country
+(
+  country_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  code character(3) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk3 PRIMARY KEY (country_id)
+);
+
+DROP TABLE language_spoken cascade;
+
+CREATE TABLE language_spoken
+(
+  language_spoken_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk8 PRIMARY KEY (language_spoken_id)
+);
+
+
+DROP TABLE marital_status cascade;
+
+CREATE TABLE marital_status
+(
+  marital_status_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk11 PRIMARY KEY (marital_status_id)
+); 
+ 
+DROP TABLE race cascade;
+
+CREATE TABLE race
+(
+  race_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk17 PRIMARY KEY (race_id)
+); 
+ 
+DROP TABLE role_type cascade;
+
+CREATE TABLE role_type
+(
+  role_type_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk19 PRIMARY KEY (role_type_id)
+); 
+ 
+DROP TABLE us_state cascade;
+
+CREATE TABLE us_state(
+  us_state_code character(2) NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk21 PRIMARY KEY (us_state_code)
+); 
+
+DROP TABLE utah_county cascade;
+
+CREATE TABLE utah_county(
+  utah_county_id bigint NOT NULL,
+  utah_health_district_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  code character(2) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk22 PRIMARY KEY (utah_county_id)
+); 
+ 
+DROP TABLE address cascade;
+
+CREATE TABLE address(
+  address_id bigint NOT NULL,
+  charm_id bigint NOT NULL,
+  us_state_code character(2),
+  line1 character varying(100),
+  line2 character varying(100),
+  delivery_text character varying(100),
+  us_city character varying(100),
+  zip5 character(5),
+  zip4 character(4),
+  non_us_address_text character varying(256),
+  longitude character varying(30),
+  latitude character varying(30),
+  cass_certified_flag character(1),
+  corrected boolean,
+  correcta_result_code bigint,
+  correcta_error_code character varying(100),
+  correcta_last_run timestamp without time zone,
+  start_date character(10),
+  end_date character(10),
+  do_not_release_flag character(1), 
+  note character varying(512),
+  CONSTRAINT pk1 PRIMARY KEY (address_id)
+); 
+ 
+DROP TABLE ethnicity cascade;
+
+CREATE TABLE ethnicity(
+  ethnicity_id bigint NOT NULL,
+  name character varying(100) NOT NULL,
+  obsoleted_on_date date,
+  CONSTRAINT pk5 PRIMARY KEY (ethnicity_id)
+); 
+
+DROP TABLE birth_facility cascade;
+
+CREATE TABLE birth_facility (
+    facility_code character varying(3) NOT NULL,
+    facility character varying(512) NOT NULL,
+    county_code character varying(2),
+    city character varying(512),
+    CONSTRAINT pm_birth_facility PRIMARY KEY (facility_code)
+);
+
+DROP TABLE adoption_type cascade;
+
+CREATE TABLE adoption_type(
+  code character(1) NOT NULL,
+  type character varying(50),
+  updated_date date,
+  obsoleted_date date,
+  CONSTRAINT pk_adoption_type PRIMARY KEY (code)
+);
+
+insert into adoption_type (code,type) values('N','Two new parents');
+
+insert into adoption_type (code,type) values('R','Foreign');
+
+insert into adoption_type (code,type) values('S','Same sex parents');
+
+insert into adoption_type (code,type) values('A','Foreign stepparents');
+
+insert into adoption_type (code,type) values('C','Court ordered paternity');
+
+insert into adoption_type (code,type) values('D','Court ordered delayed Utah birth');
+
+insert into adoption_type (code,type) values('F','Family');
+
+insert into adoption_type (code,type) values('I','Single parent');
+
+insert into adoption_type (code,type) values('P','Stepparent');
+
+insert into adoption_type (code,type) values('U','Unknown');
+
+DROP TYPE IF EXISTS enum_adoption_status CASCADE;
+
+CREATE TYPE enum_adoption_status as ENUM('I','C');
+
+DROP TABLE person cascade;
+
+CREATE TABLE person(
+  charm_id bigint NOT NULL,
+  merged_to_id bigint,
+  marital_status_id bigint,
+  pref_language_id bigint,
+  ethnicity_id bigint,
+  race_id bigint,
+  birth_utah_county_id smallint,
+  birth_us_state_code character(2),
+  birth_country_id integer,
+  birth_facility_code character varying(3),
+  is_adult character(1),
+  last_name character varying(50),
+  first_name character varying(50),
+  middle_name character varying(50),
+  suffix character varying(5),
+  gender character(1),
+  birth_order smallint,
+  birth_date character(10),
+  state_file_number character varying(30),
+  new_born_screening_number character varying(30),
+  birth_weight_oz smallint,
+  birth_weight_grams smallint,
+  birth_city character varying(100),
+  deceased_flag character(1),
+  deceased_date character(10),
+  ssn character varying(9),
+  maiden_name character varying(50),
+  mothers_maiden_name character varying(50),
+  sort_name character varying(80),
+  note character varying(512),
+  chp_modified_utc_timestamp bigint,
+  upper_last_name character varying(50),
+  upper_first_name character varying(50),
+  upper_middle_name character varying(50),
+  multiple_birth character(1),
+  adoption_type character(1),
+  adoption_status enum_adoption_status,
+  adoption_date date,
+  is_sealed character varying(1) DEFAULT 'F',
+  conseal character varying(1) DEFAULT 'F',
+  originating_program character varying(10),
+  originating_program_timestamp timestamp(0),
+  last_updated_program character varying(10),
+  last_updated_program_timestamp timestamp(0),
+  updated timestamp(0),
+  CONSTRAINT pk12 PRIMARY KEY (charm_id)
+);
+
+
+DROP TABLE alert cascade;
+
+CREATE TABLE alert
+(
+  alert_id bigint NOT NULL,
+  charm_id bigint NOT NULL,
+  alert_category character varying(256) NOT NULL,
+  severity character(1) NOT NULL,
+  originating_program character varying(10) NOT NULL,
+  message character varying(512) NOT NULL,
+  alert_date character(10) NOT NULL,
+  expiration_date character(10),
+  CONSTRAINT pk24 PRIMARY KEY (alert_id)
+); 
+ 
+
+DROP TABLE deferred_match cascade;
+
+CREATE TABLE deferred_match
+(
+  match_src_charm_id bigint NOT NULL,
+  match_dest_charm_id bigint NOT NULL,
+  matching_degree character(2),
+  matching_score numeric
+); 
+ 
+DROP TABLE email cascade;
+
+CREATE TABLE email
+(
+  email_id bigint NOT NULL,
+  charm_id bigint NOT NULL,
+  email character varying(128) NOT NULL,
+  start_date character(10),
+  end_date character(10),
+  do_not_release_flag character(1), 
+  note character varying(512),
+  CONSTRAINT pk4 PRIMARY KEY (email_id)
+); 
+ 
+DROP TABLE merged_charm_id_forwarding cascade;
+
+CREATE TABLE merged_charm_id_forwarding
+(
+  merged_from_charm_id bigint NOT NULL,
+  merged_to_charm_id bigint NOT NULL,
+  merged_timestamp bigint NOT NULL
+); 
+ 
+DROP TABLE non_match cascade;
+
+CREATE TABLE non_match
+(
+  match_src_charm_id bigint NOT NULL,
+  match_dest_charm_id bigint NOT NULL
+); 
+ 
+DROP TABLE person_alias cascade;
+
+CREATE TABLE person_alias
+(
+  alias_id bigint NOT NULL,
+  charm_id bigint NOT NULL,
+  last_name character varying(50),
+  first_name character varying(50),
+  middle_name character varying(50),
+  suffix character varying(5),
+  updated timestamp(0),
+  CONSTRAINT pk25 PRIMARY KEY (alias_id)
+); 
+
+DROP TABLE person_role cascade;
+
+CREATE TABLE person_role
+(
+  person_role_id bigint NOT NULL,
+  child_charm_id bigint NOT NULL,
+  person_charm_id bigint NOT NULL,
+  role_type_id bigint,
+  start_date character(10),
+  end_date character(10),
+  CONSTRAINT pk18 PRIMARY KEY (person_role_id)
+); 
+ 
+DROP TABLE phone_number cascade;
+
+CREATE TABLE phone_number
+(
+  phone_number_id bigint NOT NULL,
+  charm_id bigint NOT NULL,
+  phone character varying(23) NOT NULL,
+  start_date character(10),
+  end_date character(10),
+  do_not_release_flag character(1),
+  note character varying(512),
+  CONSTRAINT pk16 PRIMARY KEY (phone_number_id)
+); 
+
+ALTER TABLE UTAH_COUNTY ADD CONSTRAINT refutah_health_district22 
+    FOREIGN KEY (utah_health_district_id)
+    REFERENCES utah_health_district (utah_health_district_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE utah_county ADD CONSTRAINT u_code UNIQUE(code);
+
+
+ALTER TABLE birth_facility ADD CONSTRAINT fk_utah_county
+    FOREIGN KEY (county_code) 
+    REFERENCES utah_county(code);
+
+ALTER TABLE ADDRESS ADD CONSTRAINT refperson27 
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE ADDRESS ADD CONSTRAINT refus_state2 
+    FOREIGN KEY (us_state_code)
+    REFERENCES us_state (us_state_code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+
+ALTER TABLE ALERT ADD CONSTRAINT refperson33 
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+ALTER TABLE PERSON_ALIAS ADD CONSTRAINT refperson31
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE DEFERRED_MATCH ADD CONSTRAINT refperson42 
+    FOREIGN KEY (match_dest_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE DEFERRED_MATCH ADD CONSTRAINT refperson43 
+    FOREIGN KEY (match_src_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+ALTER TABLE EMAIL ADD CONSTRAINT refperson25 
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE MERGED_CHARM_ID_FORWARDING ADD CONSTRAINT refperson40
+    FOREIGN KEY (merged_to_charm_id)
+     REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE MERGED_CHARM_ID_FORWARDING ADD CONSTRAINT refperson41
+    FOREIGN KEY (merged_from_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+ALTER TABLE NON_MATCH ADD CONSTRAINT refperson48
+    FOREIGN KEY (match_src_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE NON_MATCH ADD CONSTRAINT refperson50
+    FOREIGN KEY (match_dest_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+ALTER TABLE PERSON ADD CONSTRAINT refcountry3
+    FOREIGN KEY (birth_country_id)
+    REFERENCES country (country_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refethnicity4
+    FOREIGN KEY (ethnicity_id)
+    REFERENCES ethnicity (ethnicity_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT reflanguage_spoken7
+    FOREIGN KEY (pref_language_id)
+    REFERENCES language_spoken (language_spoken_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refmarital_status10
+    FOREIGN KEY (marital_status_id)
+    REFERENCES marital_status (marital_status_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refperson35 
+    FOREIGN KEY (merged_to_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE PERSON
+  ADD CONSTRAINT adoption_type__person FOREIGN KEY (adoption_type)
+      REFERENCES adoption_type (code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refrace13  
+    FOREIGN KEY (race_id)
+    REFERENCES race (race_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refus_state14
+    FOREIGN KEY (birth_us_state_code)
+    REFERENCES us_state (us_state_code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refutah_county11
+    FOREIGN KEY (birth_utah_county_id)
+    REFERENCES utah_county (utah_county_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON ADD CONSTRAINT refbirth_facility_to_person 
+    FOREIGN KEY (birth_facility_code) 
+    REFERENCES birth_facility (facility_code) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+ 
+
+ALTER TABLE PERSON_ROLE ADD CONSTRAINT refrole_type20
+    FOREIGN KEY (role_type_id)
+    REFERENCES role_type (role_type_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE PERSON_ROLE ADD CONSTRAINT refperson26 
+    FOREIGN KEY (person_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE PERSON_ROLE ADD CONSTRAINT refperson34
+    FOREIGN KEY (child_charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE PHONE_NUMBER ADD CONSTRAINT refperson30
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+ALTER TABLE OPT ADD CONSTRAINT optForkeyPerson 
+    FOREIGN KEY (charm_id)
+    REFERENCES person (charm_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+CREATE INDEX fki_utah_county ON birth_facility USING btree (county_code);
+
+CREATE INDEX alert_charm_id ON alert USING btree (charm_id);
+CREATE INDEX alert_index_alert_category ON alert USING btre(alert_category);
+CREATE INDEX alert_index_alert_date ON alert USING btree (alert_date);
+CREATE INDEX alert_index_message ON alert USING btree (message);
+CREATE INDEX alert_index_originating_program ON alert USING btree (originating_program);
+CREATE INDEX alert_index_severity ON alert USING btree (severity);
+
+CREATE INDEX deferred_match_dest_charm_id ON deferred_match USING btree (match_dest_charm_id);
+CREATE INDEX deferred_match_src_charm_id ON deferred_match USING btree (match_src_charm_id);
+CREATE INDEX MERGED_TO_CHARM_ID_FORWARDING ON MERGED_CHARM_ID_FORWARDING(MERGED_TO_CHARM_ID);
+
+CREATE INDEX MERGED_FROM_CHARM_ID_FORWARDING ON MERGED_CHARM_ID_FORWARDING(MERGED_FROM_CHARM_ID);
+
+CREATE INDEX NON_MATCH_SRC_CHARM_ID ON NON_MATCH(MATCH_SRC_CHARM_ID);
+CREATE INDEX NON_MATCH_DEST_CHARM_ID ON NON_MATCH(MATCH_DEST_CHARM_ID);
+CREATE INDEX PERSON_BIRTH_COUNTRY_ID ON PERSON(BIRTH_COUNTRY_ID);
+CREATE INDEX PERSON_ETHNICITY_ID ON PERSON(ETHNICITY_ID);
+CREATE INDEX PERSON_PREF_LANGUAGE_ID ON person USING btree (pref_language_id);
+CREATE INDEX PERSON_BIRTH_UTAH_COUNTY_ID ON person USING btree (birth_utah_county_id);
+CREATE INDEX PERSON_BIRTH_US_STATE_CODE ON person USING btree (birth_us_state_code);
+CREATE INDEX PERSON_MERGE_TO_ID ON person USING btree (merged_to_id);
+CREATE INDEX IS_ADULT_INDEX ON PERSON(IS_ADULT);
+CREATE INDEX PRIMARY_NAME_INDEX_LAST_NAME ON person USING btree (last_name);
+CREATE INDEX u_primary_name_index_last_name ON person USING btree (upper(last_name::text));
+CREATE INDEX primary_name_index_first_name ON person USING btree (first_name); 
+CREATE INDEX u_primary_name_index_first_name ON person USING btree (upper(first_name::text));
+CREATE INDEX primary_name_index_middle_name ON person USING btree (middle_name);
+CREATE INDEX u_primary_name_index_middle_name ON person USING btree (upper(middle_name::text));
+CREATE INDEX birth_date_index ON person USING btree (birth_date);
+CREATE INDEX idx_upper_first_name ON person USING btree (upper_first_name);
+CREATE INDEX idx_upper_last_name ON person USING btree (upper_last_name);
+CREATE INDEX sfn_index ON person USING btree (state_file_number);
+CREATE INDEX nbsn_index ON person USING btree (new_born_screening_number);
+CREATE INDEX ssn_index ON person USING btree (ssn);
+
+CREATE INDEX alias_charm_id ON person_alias USING btree (charm_id);
+CREATE INDEX alias_index_first_name ON person_alias USING btree (first_name);
+CREATE INDEX alias_index_last_name ON person_alias USING btree (last_name);  
+CREATE INDEX alias_index_middle_name ON person_alias USING btree (middle_name);  
+CREATE INDEX alias_index_suffix ON person_alias USING btree (suffix);
+CREATE INDEX person_role_child_charm_id ON person_role USING btree (child_charm_id);
+CREATE INDEX person_role_person_charm_id ON person_role USING btree (person_charm_id);
+CREATE INDEX person_role_role_type_id ON person_role USING btree (role_type_id);
+
+CREATE INDEX phone_number_index ON phone_number USING btree (phone);
+CREATE INDEX phone_number_index_charm_id ON phone_number USING btree (charm_id);
+CREATE INDEX utah_county_utah_health_district_id ON utah_county USING btree (utah_health_district_id);
+CREATE INDEX address_index_charm_id ON address USING btree (charm_id);
+CREATE INDEX address_index_line1 ON address USING btree (line1);
+CREATE INDEX address_index_us_city ON address USING btree (us_city);
+CREATE INDEX u_address_index_line1 ON address USING btree (upper(line1::text));
+CREATE INDEX u_address_index_us_city ON address USING btree (upper(us_city::text));
+CREATE INDEX address_index_zip5 ON address USING btree (zip5);
+CREATE INDEX address_us_state_code ON address USING btree (us_state_code);
+CREATE INDEX email_index_charm_id ON email USING btree (charm_id);
+CREATE INDEX email_index_email ON email USING btree (upper(email::text));
+CREATE INDEX country_index_code ON country USING btree (code);
+CREATE INDEX country_index_name ON country USING btree (name);
+CREATE INDEX us_state_name_index ON us_state USING btree (name);
+CREATE INDEX us_state_us_state_code ON us_state USING btree (us_state_code);
+

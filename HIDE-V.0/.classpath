@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/mail.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/msbase.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/mssqlserver.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/msutil.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/mysql-connector-java-5.1.7-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/postgresql.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/psql.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/pvjdbc2.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/pvjdbc2x.jar"/>
+	<classpathentry exported="true" kind="lib" path="//psf/Home/Desktop/Office/TestDataExtractor/iSTDE2013/src/thirdparty_api/sqljdbc4.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/HIDE.DomainExtractor"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
